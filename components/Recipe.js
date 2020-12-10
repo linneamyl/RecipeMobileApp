@@ -6,8 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Recipe(props) {
   let propsItem = props;
-
-  const navigation = useNavigation();
+  let navigation = useNavigation();
 
   let image;
   if (props.item.strMealThumb) {
