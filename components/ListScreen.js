@@ -8,17 +8,15 @@ import Recipe from './Recipe';
 
 export default function ListScreen({navigation, route}) {
     const [recipeList, setRecipeList] = useState([])
-    const [recipeListKeep, setRecipeListKeep] = useState([])
-    const [isReady, setReady] = useState(true)
-
-    const {data} = route.params;
+  
+    const {data} = route.params
 
     React.useEffect(() => {
           setRecipeList(data)
-          setRecipeListKeep(data)
-          setReady(true)
+        //  console.log(data, 'DATA')
       }, []);
 
+   
     const renderItem = (item) => {
         return <Recipe item={item}/>;
     };
