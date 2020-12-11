@@ -15,13 +15,8 @@ export default function RecipeScreen({ route, navigation }) {
     const [isReady, setReady] = useState(false)
     const [recipeById, setRecipeById] = useState()
     
-   // console.log(recipeById, 'TÄMÄ')
-    console.log(itemId)
-     //let desc = recipeById.strInstructions
-    // console.log(id, 'ID')
-    // const image = { uri: recipeById[0].strMealThumb };
-    // console.log(image, 'IMAGE')
     let image = { uri: propsItem.item.strMealThumb };
+    
 
     function fetchRecipeById(){
         fetch('https://www.themealdb.com/api/json/v1/1/lookup.php?i=' + itemId)
@@ -40,25 +35,55 @@ export default function RecipeScreen({ route, navigation }) {
         fetchRecipeById();
       }, []); 
 
-  
     if (isReady === true){
-    return(
-        <View style={styles.RecipeScreenContainer}>
-            <Image
-              style={styles.Image}
-              source={image}
-              progressiveRenderingEnabled={true}
-            />
-            <Text>{recipeById.strMeal}</Text>
-        </View>
-    )
+        let ingredients = []
+        for (let entry of Object.entries(recipeById)) {
+            if (entry[0].includes("strIngredient")) {
+                ingredients.push(entry[1]);
+            }
+        }
+        const cleanedIngrArray =  ingredients.filter(e =>  e);
+
+        let measures = []
+        for (let entry of Object.entries(recipeById)) {
+          if (entry[0].includes("strMeasure")) {
+              measures.push(entry[1]);
+          }
+        }
+        const cleanedMeasArray =  measures.filter(e =>  e);
+        console.log(cleanedMeasArray)
+      return(
+          <View style={styles.RecipeScreenContainer}>
+              <Image
+                style={styles.Image}
+                source={image}
+                progressiveRenderingEnabled={true}
+              />
+              <View style={styles.recipeInfo}>
+                  <Text style={styles.text}>{recipeById.strMeal}</Text>
+                  <Text style={styles.text}>{recipeById.strInstructions}</Text>
+              </View>
+              <View style={{flexDirection: 'row'}}>
+              <View>
+              { cleanedMeasArray.map((item, key)=>(
+                <Text key={key}> { item } </Text>)
+              )}
+              </View>
+                <View>
+              { cleanedIngrArray.map((item, key)=>(
+                <Text key={key}> { item } </Text>)
+              )}
+              </View>
+              
+              </View>
+          </View>
+      )
     } else {
       return(
         <View style={styles.RecipeScreenContainer}>
-            
             <Text>loading...</Text>
         </View>
-    )
+      )
     }
 }
 
@@ -70,11 +95,14 @@ const styles = StyleSheet.create({
       flex: 1,
     },
     Image: {
-      flex: 1,
-    
+      flex: 1.5,
     },
-    Infobox: {
-      padding: 5,
+    recipeInfo: {
+      flex: 2,
+      alignItems: "center"
     },
+    text: {
+      padding: 5
+    }
   });
   
