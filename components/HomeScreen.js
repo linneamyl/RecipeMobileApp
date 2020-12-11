@@ -15,6 +15,7 @@ export default function HomeScreen({ navigation }) {
     const [searchResults, setSearchResults] = useState([])
     const [areas, setAreas] = useState([])
     const [chosenArea, setChosenArea] = useState('')
+    const [randomRecipe, setRandomRecipe] = useState()
 
 
     // Pickerin alueet haetaan aina kun sivu avataan
@@ -57,15 +58,31 @@ export default function HomeScreen({ navigation }) {
         fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=' + searchQuery)
         .then((response) => response.json())
         .then((responseData) => {
-          setSearchResults(responseData.meals)
+          //setSearchResults(responseData.meals)
           //console.log(searchResults)
+          navigation.navigate("ListScreen", {data: responseData.meals})
         })
         .catch((error) => {
           Alert.alert('Error', error.message)
         });
-        navigation.navigate("ListScreen", {data: searchResults})
+        
       }
 
+
+
+    // Random reseptin fetch
+    const fetchRandomRecipe = () =>  {
+      fetch('https://www.themealdb.com/api/json/v1/1/random.php')
+      .then((response) => response.json())
+      .then((responseData) => {
+        setRandomRecipe(responseData.meals[0])
+        //console.log(randomRecipe)
+      })
+      .catch((error) => {
+        Alert.alert('Error', error.message)
+      });
+      navigation.navigate("RandomRecipeScreen", { data: randomRecipe })
+    }
     
 
     return (
@@ -97,6 +114,9 @@ export default function HomeScreen({ navigation }) {
                 raised icon = {{name: 'search'}}
                 onPress={searchByArea}
                 title="SEARCH BY AREA"/>
+            <Button 
+                onPress={fetchRandomRecipe}
+                title="RANDOM RECIPE"/>
         </View>
     )
 }
