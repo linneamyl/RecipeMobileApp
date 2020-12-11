@@ -11,12 +11,13 @@ from 'react-native';
 export default function RecipeScreen({ route, navigation }) {
 
     const { propsItem } = route.params;
-    let itemId = propsItem.item.idMeal
+    let itemId = propsItem.item.idMeal;
+    const [isReady, setReady] = useState(false)
+    const [recipeById, setRecipeById] = useState()
     
-    const [recipeById, setRecipeById] = useState({})
-    
-    console.log(recipeById, 'TÄMÄ')
-    // let id = recipeById[0].idMeal
+   // console.log(recipeById, 'TÄMÄ')
+    console.log(itemId)
+     //let desc = recipeById.strInstructions
     // console.log(id, 'ID')
     // const image = { uri: recipeById[0].strMealThumb };
     // console.log(image, 'IMAGE')
@@ -27,8 +28,9 @@ export default function RecipeScreen({ route, navigation }) {
         .then((response) => response.json())
         .then((responseData) => {
           setRecipeById(responseData.meals[0])
-          console.log(recipeById)
+          console.log(responseData.meals[0])
         })
+        .then(data => setReady(true))
         .catch((error) => {
           Alert.alert('Error', error.message)
         });
@@ -39,7 +41,7 @@ export default function RecipeScreen({ route, navigation }) {
       }, []); 
 
   
-  
+    if (isReady === true){
     return(
         <View style={styles.RecipeScreenContainer}>
             <Image
@@ -47,9 +49,17 @@ export default function RecipeScreen({ route, navigation }) {
               source={image}
               progressiveRenderingEnabled={true}
             />
-            <Text>moro</Text>
+            <Text>{recipeById.strMeal}</Text>
         </View>
     )
+    } else {
+      return(
+        <View style={styles.RecipeScreenContainer}>
+            
+            <Text>loading...</Text>
+        </View>
+    )
+    }
 }
 
 const styles = StyleSheet.create({
