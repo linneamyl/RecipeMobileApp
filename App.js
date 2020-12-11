@@ -5,6 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './components/HomeScreen'
 import ListScreen from './components/ListScreen'
 import RecipeScreen from './components/RecipeScreen'
+import RandomRecipeScreen from './components/RandomRecipeScreen';
 
 const Stack = createStackNavigator();
 
@@ -15,6 +16,7 @@ export default function App() {
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="ListScreen" component={ListScreen} />
         <Stack.Screen name="RecipeScreen" component={RecipeScreen} />
+        <Stack.Screen name="RandomRecipeScreen" component={RandomRecipeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
