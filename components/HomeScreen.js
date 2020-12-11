@@ -12,10 +12,10 @@ import { SearchBar, Button, Tile } from 'react-native-elements';
 export default function HomeScreen({ navigation }) {
 
     const [searchQuery, setSearchQuery] = useState('')
-    const [searchResults, setSearchResults] = useState([])
+    //const [searchResults, setSearchResults] = useState([])
     const [areas, setAreas] = useState([])
     const [chosenArea, setChosenArea] = useState('')
-    const [randomRecipe, setRandomRecipe] = useState()
+    //const [randomRecipe, setRandomRecipe] = useState()
 
 
     // Pickerin alueet haetaan aina kun sivu avataan
@@ -41,12 +41,13 @@ export default function HomeScreen({ navigation }) {
       fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a=' + chosenArea)
       .then((response) => response.json())
       .then((responseData) => {
-        setSearchResults(responseData.meals)
+        navigation.navigate("ListScreen", {data: responseData.meals})
+       // setSearchResults(responseData.meals)
       })
       .catch((error) => {
         Alert.alert('Error', error)
       });
-      navigation.navigate("ListScreen", {data: searchResults})
+      
     }
 
 
@@ -75,13 +76,14 @@ export default function HomeScreen({ navigation }) {
       fetch('https://www.themealdb.com/api/json/v1/1/random.php')
       .then((response) => response.json())
       .then((responseData) => {
-        setRandomRecipe(responseData.meals[0])
+        navigation.navigate("RandomRecipeScreen", { data: responseData.meals[0] })
+        //setRandomRecipe(responseData.meals[0])
         //console.log(randomRecipe)
       })
       .catch((error) => {
         Alert.alert('Error', error.message)
       });
-      navigation.navigate("RandomRecipeScreen", { data: randomRecipe })
+      
     }
     
 
