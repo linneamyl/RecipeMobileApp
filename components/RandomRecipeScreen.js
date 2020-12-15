@@ -1,38 +1,92 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View,
          Text,  
          StyleSheet,
          Image,
-         Alert,
-         ActivityIndicator, 
-         FlatList } 
+         ScrollView,
+        } 
 from 'react-native';
 
-export default function RandomRecipeScreen({ route, navigation }) {
+export default function RandomRecipeScreen({ route }) {
 
     const { data } = route.params;
-    console.log(data)
+    let image = { uri: data.strMealThumb}
+
+    let ingredients = []
+    for (let entry of Object.entries(data)) {
+        if (entry[0].includes("strIngredient")) {
+            ingredients.push(entry[1]);
+        }
+    }
+
+    /*  Reseptin ainesosat ja niiden määrät pitää filtteröidä useamman kerran, koska rajapinnan tyhjät ingredients kohdat 
+        sisältävät erilaisia muuttujia kuten "", " ", ja null  */
+
+    const firstFilterIng =  ingredients.filter(item => item != "") ;
+    const secondFilterIng = firstFilterIng.filter(item => item != " " )
+    const thirdFilterIng = secondFilterIng.filter(item => item)
+
+    let measures = []
+    for (let entry of Object.entries(data)) {
+      if (entry[0].includes("strMeasure")) {
+          measures.push(entry[1]);
+      }
+    }
+    const firstFilterMeas =  measures.filter(item => item != "") 
+        const secondFilterMeas = firstFilterMeas.filter(item => item != " " )
+        const thirdFilterMeas = secondFilterMeas.filter(item => item)
     
     return(
-        <View style={styles.RandomRecipeScreenContainer}>
-            <Text>Moro</Text>
-        </View>
+      <ScrollView style={styles.RandomRecipeScreenContainer}>
+        <View style = {{alignItems: 'center'}}> 
+          <Image
+            style={styles.Image}
+            source={image}
+            progressiveRenderingEnabled={true}
+          />
+        </View> 
+        <View style={styles.recipeInfo}>
+            <Text style={styles.title}>{data.strMeal}</Text>
+        </View> 
+        <View style={styles.ingredientsContainer}> 
+          <View>
+          { thirdFilterMeas.map((item, key)=>(
+            <Text key={key}> { item } </Text>)
+          )}
+          </View>
+          <View>
+          { thirdFilterIng.map((item, key)=>(
+            <Text key={key}> { item } </Text>)
+          )}
+          </View> 
+        </View> 
+        <Text style={styles.text}>{data.strInstructions}</Text>
+  </ScrollView>
     )
-
 }
 
 const styles = StyleSheet.create({
     RandomRecipeScreenContainer: {
       flex: 1,
     },
-    ActivityIndicator: {
-      flex: 1,
-    },
     Image: {
-      flex: 1,
-    
+      resizeMode: 'contain',
+      width: 300, 
+      height: 300,
     },
-    Infobox: {
+    recipeInfo: {
+      alignItems: "center"
+    },
+    title: {
       padding: 5,
+      fontWeight: 'bold',
+      fontSize: 18
     },
+    text: {
+      padding: 10,
+    },
+    ingredientsContainer: {
+      flexDirection: 'row',
+      padding: 10
+    }
   });

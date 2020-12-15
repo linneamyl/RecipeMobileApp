@@ -1,10 +1,13 @@
 import React from "react";
-
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, 
+         Text, 
+         View, 
+         Image } 
+from "react-native";
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Recipe(props) {
+export default function Recipe( props ) {
   let propsItem = props;
   let navigation = useNavigation();
 
@@ -28,7 +31,7 @@ export default function Recipe(props) {
         >
           <Image
             progressiveRenderingEnabled={true}
-            style={{ width: 55, height: 55 }}
+            style={{ width: 60, height: 60 }}
             source={image}
           />
         </TouchableHighlight>
@@ -51,8 +54,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginVertical: 10,
     flexDirection: "row",
-    borderWidth: 1,
-    padding: 5,
     alignItems: "center",
   },
 });
