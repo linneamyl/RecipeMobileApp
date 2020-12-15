@@ -21,7 +21,6 @@ export default function RecipeScreen({ route }) {
         .then((response) => response.json())
         .then((responseData) => {
           setRecipeById(responseData.meals[0])
-          console.log(responseData.meals[0])
         })
         .then(data => setReady(true))
         .catch((error) => {
