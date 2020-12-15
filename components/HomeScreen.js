@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View,
-         Text,  
          StyleSheet, 
-         FlatList,
-         Alert
+         Alert,
+         Text,
          } 
 from 'react-native';
 import { Picker } from '@react-native-picker/picker'
-import { SearchBar, Button, Tile } from 'react-native-elements';
+import { SearchBar,
+         Button, 
+         Tile, 
+         Icon } 
+from 'react-native-elements';
 
 export default function HomeScreen({ navigation }) {
 
     const [searchQuery, setSearchQuery] = useState('')
-    //const [searchResults, setSearchResults] = useState([])
     const [areas, setAreas] = useState([])
     const [chosenArea, setChosenArea] = useState('')
-    //const [randomRecipe, setRandomRecipe] = useState()
-
 
     // Pickerin alueet haetaan aina kun sivu avataan
     useEffect(() => {
@@ -34,33 +34,23 @@ export default function HomeScreen({ navigation }) {
       })
     }
 
-
-
     // Hakee Arean mukaan 
     const searchByArea = () => {
       fetch('https://www.themealdb.com/api/json/v1/1/filter.php?a=' + chosenArea)
       .then((response) => response.json())
       .then((responseData) => {
         navigation.navigate("ListScreen", {data: responseData.meals})
-       // setSearchResults(responseData.meals)
       })
       .catch((error) => {
         Alert.alert('Error', error)
       });
-      
     }
-
-
-
-
 
     // Hakutoiminnon funktio
     const searchRecipes = () =>  {
         fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=' + searchQuery)
         .then((response) => response.json())
         .then((responseData) => {
-          //setSearchResults(responseData.meals)
-          //console.log(searchResults)
           navigation.navigate("ListScreen", {data: responseData.meals})
         })
         .catch((error) => {
@@ -69,65 +59,86 @@ export default function HomeScreen({ navigation }) {
         
       }
 
-
-
     // Random reseptin fetch
     const fetchRandomRecipe = () =>  {
       fetch('https://www.themealdb.com/api/json/v1/1/random.php')
       .then((response) => response.json())
       .then((responseData) => {
         navigation.navigate("RandomRecipeScreen", { data: responseData.meals[0] })
-        //setRandomRecipe(responseData.meals[0])
-        //console.log(randomRecipe)
       })
       .catch((error) => {
         Alert.alert('Error', error.message)
       });
-      
     }
-    
 
     return (
         <View>
             <Tile
-                imageSrc={require('../assets/foodpic.png')}
+                imageSrc={{uri: 'https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg/preview'}}
                 title="Recipe Finder"
                 featured caption="Find the best food recipes for everyday occasions"
-            />
-            <SearchBar
-                placeholder="Search recipes..."
-                onChangeText={value => setSearchQuery(value)}
-                value={searchQuery}
-            />
-            <Button 
-                raised icon = {{name: 'search'}}
-                onPress={searchRecipes}
-                title="SEARCH"/>
-            <Picker 
-                style={{height: 30, width: 150, marginTop: 40}} 
-                onValueChange={selectedValue => setChosenArea(selectedValue)}
-                selectedValue={chosenArea}>
-                {
-                  areas.map((item) =>
-                    <Picker.Item key={item} label={item.strArea} value={item.strArea} />)
-                }
-            </Picker>
-            <Button 
-                raised icon = {{name: 'search'}}
-                onPress={searchByArea}
-                title="SEARCH BY AREA"/>
-            <Button 
-                onPress={fetchRandomRecipe}
-                title="RANDOM RECIPE"/>
+                captionStyle={{color: 'black', fontSize: 20, fontWeight: 'bold'}}
+                titleStyle={{color: 'black', fontSize: 40, fontWeight: 'bold'}}
+            /> 
+            <View style={{padding:10}}>
+                <SearchBar
+                    inputStyle={{backgroundColor: 'white'}}
+                    containerStyle={{backgroundColor: 'white', borderWidth: 1, borderRadius: 5}}
+                    placeholderTextColor={"rgb(0,0,0)"}
+                    inputContainerStyle={{backgroundColor: 'white'}}
+                    style={{justifyContent: 'space-around'}}
+                    placeholder="Search recipes..."
+                    onChangeText={value => setSearchQuery(value)}
+                    value={searchQuery}
+              />
+            </View>
+            <View style={styles.Icon}>
+                <Icon reverse
+                      type="material"
+                      name="search"
+                      onPress={searchRecipes}
+                />
+            </View>
+            <View style={{alignItems: 'center'}}>
+                <Text style={styles.Text}>Choose recipes by area</Text>
+            </View>
+            <View style={{alignItems: 'center'}}>
+                <Picker 
+                    style={{height: 30, width: 150}} 
+                    onValueChange={selectedValue => setChosenArea(selectedValue)}
+                    selectedValue={chosenArea}>
+                    {
+                      areas.map((item) =>
+                        <Picker.Item key={item} label={item.strArea} value={item.strArea} />)
+                    }
+                </Picker>
+                <Button
+                    style={{alignItems: 'flex-end'}}
+                    type="clear"
+                    
+                    onPress={searchByArea}
+                    title="SEARCH BY AREA"/>
+            </View>
+            <View style={{alignItems: 'center'}}>
+                <Text style={styles.Text}>Get a random recipe</Text>
+            </View>
+                <Button 
+                    type="clear"
+                    onPress={fetchRandomRecipe}
+                    title="RANDOM RECIPE"
+                />
         </View>
     )
 }
 
-
 const styles = StyleSheet.create({
-  image: {
-    flex: 1,
-    resizeMode: "cover",
-    justifyContent: "center"
+  Icon: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  Text: {
+    padding: 10,
+    fontSize: 16,
+    fontWeight: 'bold'
   }
 })
