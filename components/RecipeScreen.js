@@ -4,20 +4,18 @@ import { View,
          StyleSheet,
          Image,
          Alert,
-         ActivityIndicator, 
-         FlatList } 
+         ScrollView } 
 from 'react-native';
 
-export default function RecipeScreen({ route, navigation }) {
+export default function RecipeScreen({ route }) {
 
     const { propsItem } = route.params;
-    let itemId = propsItem.item.idMeal;
     const [isReady, setReady] = useState(false)
     const [recipeById, setRecipeById] = useState()
     
+    let itemId = propsItem.item.idMeal;
     let image = { uri: propsItem.item.strMealThumb };
     
-
     function fetchRecipeById(){
         fetch('https://www.themealdb.com/api/json/v1/1/lookup.php?i=' + itemId)
         .then((response) => response.json())
@@ -42,7 +40,10 @@ export default function RecipeScreen({ route, navigation }) {
                 ingredients.push(entry[1]);
             }
         }
-        const cleanedIngrArray =  ingredients.filter(e =>  e);
+
+        // The MealDB:n APIssa joissain resepteissä tyhjät
+        const firstFilterIng =  ingredients.filter(item => item != "") ;
+        const secondFilterIng = firstFilterIng.filter(item => item != " " )
 
         let measures = []
         for (let entry of Object.entries(recipeById)) {
@@ -50,33 +51,35 @@ export default function RecipeScreen({ route, navigation }) {
               measures.push(entry[1]);
           }
         }
-        const cleanedMeasArray =  measures.filter(e =>  e);
-        console.log(cleanedMeasArray)
+        const firstFilterMeas =  measures.filter(item => item != "") 
+        const secondFilterMeas = firstFilterMeas.filter(item => item != " " )
+
       return(
-          <View style={styles.RecipeScreenContainer}>
-              <Image
-                style={styles.Image}
-                source={image}
-                progressiveRenderingEnabled={true}
-              />
+          <ScrollView style={styles.RecipeScreenContainer}>
+              <View style = {{alignItems: 'center'}}> 
+                <Image
+                  style={styles.Image}
+                  source={image}
+                  progressiveRenderingEnabled={true}
+                />
+              </View> 
               <View style={styles.recipeInfo}>
-                  <Text style={styles.text}>{recipeById.strMeal}</Text>
-                  <Text style={styles.text}>{recipeById.strInstructions}</Text>
+                  <Text style={styles.title}>{recipeById.strMeal}</Text>
               </View>
-              <View style={{flexDirection: 'row'}}>
-              <View>
-              { cleanedMeasArray.map((item, key)=>(
-                <Text key={key}> { item } </Text>)
-              )}
-              </View>
+              <View style={styles.ingredientsContainer}>
                 <View>
-              { cleanedIngrArray.map((item, key)=>(
-                <Text key={key}> { item } </Text>)
-              )}
+                  { secondFilterMeas.map((item, key)=>(
+                    <Text key={key}> { item } </Text>)
+                  )}
+                </View>
+                <View>
+                  { secondFilterIng.map((item, key)=>(
+                    <Text key={key}> { item } </Text>)
+                  )}
+                </View>
               </View>
-              
-              </View>
-          </View>
+              <Text style={styles.text}>{recipeById.strInstructions}</Text>
+          </ScrollView>
       )
     } else {
       return(
@@ -89,20 +92,27 @@ export default function RecipeScreen({ route, navigation }) {
 
 const styles = StyleSheet.create({
     RecipeScreenContainer: {
-      flex: 1,
-    },
-    ActivityIndicator: {
-      flex: 1,
+      flex: 1
     },
     Image: {
-      flex: 1.5,
+      resizeMode: 'contain',
+       width: 300, 
+       height: 300,
     },
     recipeInfo: {
-      flex: 2,
       alignItems: "center"
     },
+    title: {
+      padding: 5,
+      fontWeight: 'bold',
+      fontSize: 18
+    },
     text: {
-      padding: 5
+      padding: 10,
+    },
+    ingredientsContainer: {
+      flexDirection: 'row',
+      padding: 10
     }
   });
   
